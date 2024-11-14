@@ -3,7 +3,7 @@ import { Response, Request, NextFunction } from 'express'
 import { userModel } from '../models/userModel';
 import { ClientSideException } from '../utils/errors';
 import { env } from 'process';
-import {conn} from '../database/databaseConnection'
+import { conn } from '../database/databaseConnection'
 import * as db from 'rethinkdb';
 import { string } from 'joi';
 
@@ -54,25 +54,23 @@ const tokenCheck = async (req: Request, res: Response, next: NextFunction) => {
     // console.log(token);
 
     //jwt doğrulaması yapacağım, şifrelediğim tokeni çözücem
-    const decoded = jwt.verify(token,process.env.JWT_SECRET_KEY as Secret)as jwt.JwtPayload;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY as Secret) as jwt.JwtPayload;
 
     if (!decoded.sub || typeof decoded.sub !== 'string') {
         throw new ClientSideException("Geçersiz Token", 401);
     }
 
     //kullancııyı veitabanında bulacağım
-    const connection=await conn();
-    const userInfo=await db.table("users").get(decoded.sub).run(connection);
+    const connection = await conn();
+    const userInfo = await db.table("users").get(decoded.sub).run(connection);
 
-    if(!userInfo){
-        throw new ClientSideException("Geçersiz Token",401);
+    if (!userInfo) {
+        throw new ClientSideException("Geçersiz Token", 401);
     }
 
-    //kullanıcı bilgilerini res.locals içine ekledim
-    res.locals.userInfo=userInfo;
+    req.body.userInfo = userInfo;
     next();
 }
-
 
 
 export { createToken, tokenCheck }
