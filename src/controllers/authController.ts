@@ -72,8 +72,12 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 
-const home=async(req:Request,res:Response)=>{
-    new response(res.locals.userInfo,"başardıkaw").success(res);
+const home=async(req:Request,res:Response,next:NextFunction)=>{
+    const userInfo = res.locals.userInfo;
+
+    if (!userInfo) {
+        throw new ClientSideException("Yetkisiz erişim", 401);
+    }
 }
 
 
@@ -115,8 +119,25 @@ const updatePassword = async (req: Request, res: Response, next: NextFunction) =
 };
 
 
+const displaySettings=async(req:Request,res:Response,next:NextFunction)=>{
+    const userInfo = res.locals.userInfo;
+
+    if (!userInfo) {
+        throw new ClientSideException("Yetkisiz erişim", 401);
+    }
+} 
+
+const settings=async(req:Request,res:Response,next:NextFunction)=>{
+    const userInfo = res.locals.userInfo;
+
+    if (!userInfo) {
+        throw new ClientSideException("Yetkisiz erişim", 401);
+    }
+
+} 
 
 
 
 
-export { login, register ,home, updatePassword };
+
+export { login, register ,home, updatePassword, displaySettings,settings };

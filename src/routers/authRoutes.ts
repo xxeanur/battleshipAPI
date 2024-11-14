@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import express from 'express'
-import {login, register, home, updatePassword} from '../controllers/authController'
+import {login, register, home, updatePassword, displaySettings, settings} from '../controllers/authController'
 import asyncHandler from '../middlewares/asyncHandler';
 import authValidations from '../middlewares/validations/authValidation'
 import {tokenCheck} from '../middlewares/auth'
@@ -12,9 +12,17 @@ router.route("/login").post(asyncHandler(authValidations.login),asyncHandler(log
 
 router.route('/register').post(asyncHandler(authValidations.register),asyncHandler(register)); //önce doğrulama işlemi, eğer doğrulama başarılıysa kayıt işlemine geç
 
-router.patch('/settings/changePassword', updatePassword);
+
+router.route("/settings/updatePassword").patch(updatePassword);
+
+router.route("/settings/displaySettings").get(tokenCheck,displaySettings);
+
+router.route("/settings").get(tokenCheck,settings);
 
 
-router.get("/home",tokenCheck,home)
+router.route("/home").get(tokenCheck,home);
+
+//game sayfası
+// router.route("/home/game").get(tokenCheck,game);
 
 export default router;
