@@ -1,4 +1,4 @@
-import express, { Request, Response,NextFunction } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import * as db from 'rethinkdb'; // RethinkDB'yi içe aktarın
 import { conn } from '../database/databaseConnection';
 import bcyript from 'bcrypt';
@@ -9,7 +9,7 @@ import response from '../utils/response'
 
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
-    const { email, username, password } = req.body;
+    const { email, username, password, passwordAgain } = req.body;
 
     const connection = await conn(); // Bağlantıyı kur
 
@@ -25,6 +25,10 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     if (users.length > 0)
         throw new ClientSideException("kullanıcı zaten mevcut", 400);
 
+    //gelen şifreler eşleşiyor mu?
+    if (password !== passwordAgain) {
+        throw new ClientSideException("Şifreler eşleşmiyor.", 400)
+    }
 
     // Yeni kullanıcı oluşturma işlemi
     req.body.password = await bcyript.hash(req.body.password, 10);
@@ -32,13 +36,11 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 
     const user = new userModel(req.body.username, req.body.password, req.body.email);
     await db.table('users').insert(user).run(await connection).then((user) => {
-        return new response(user,"Kullanıcı başarıyla kaydedildi.").created(res)
+        return new response(user, "Kullanıcı başarıyla kaydedildi.").created(res);
     })
-
-
 }
 
 
 
 
-export {register};
+export { register };

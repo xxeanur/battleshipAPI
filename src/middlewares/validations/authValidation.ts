@@ -42,6 +42,13 @@ class AuthValidation {
                     "string.max": "Email alanı en fazla 50 karakterden oluşabilir.",
                     "any.required": "Email alanı zorunludur."
                 }),
+                passwordAgain: Joi.string().trim().min(6).max(20).required().messages({
+                    "string.base": "Şifre alanı normal metin olmalıdır.",
+                    "string.empty": "Şifre alanı boş olamaz.",
+                    "string.min": "Şifre alanı en az 6 karakter içermelidir.",
+                    "string.max": "Şifre alanı en fazla 20 karakterden oluşabilir.",
+                    "any.required": "Şifre alanı zorunludur."
+                })
             }).validateAsync(req.body)
         } catch (error) {
             //details[0] ilk hata mesajını kullancıya gönderiyor, details hata objelerini dizi şeklinde tutuyor//instanceof operatörü, bir nesnenin belirli bir türden olup olmadığını kontrol eder

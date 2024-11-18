@@ -10,8 +10,7 @@ import response from '../utils/response'
 const updatePassword = async (req: Request, res: Response, next: NextFunction) => {
     const { currentPassword, newPassword, newPasswordAgain } = req.body;
 
-    // Kullanıcı doğrulama işlemi için `res.locals.userInfo` kullanılır.
-    // const userInfo = res.locals.userInfo;
+    // Kullanıcı doğrulama işlemi için `req.body.userInfo` kullanılır.
     const userInfo = req.body.userInfo;
 
     if (!userInfo) {

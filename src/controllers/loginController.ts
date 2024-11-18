@@ -1,5 +1,4 @@
-import express, { NextFunction } from 'express';
-import { Request, Response } from 'express';
+import express, { NextFunction, Request, Response} from 'express';
 import * as db from 'rethinkdb'; // RethinkDB'yi içe aktarın
 import { conn } from '../database/databaseConnection';
 import bcyript from 'bcrypt';

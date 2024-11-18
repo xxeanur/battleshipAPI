@@ -14,7 +14,7 @@ interface User {
 }
 
 interface SuccessResponse {
-    succes: boolean;
+    success: boolean;
     token: string;
     message: string;
 }
@@ -32,7 +32,7 @@ const createToken = async (user: User, res: Response) => {
     })
 
     return res.status(201).json({
-        succes: true,
+        success: true,
         token,
         message: "başarılı"
     })
@@ -40,14 +40,14 @@ const createToken = async (user: User, res: Response) => {
 }
 
 
-const tokenCheck = async (req: Request, res: Response, next: NextFunction) => {
+const auth = async (req: Request, res: Response, next: NextFunction) => {
     //token üç parçadır, header payload ve secretKey kısmı
     //header kısmı var mı diye kontrol edicem //başında bearer var mı?
     const headerToken = req.headers.authorization && req.headers.authorization.startsWith("Bearer ");//bearer taşıyıcı, kimlik doğrulama tokenı olduğunu belirtir.
 
     //eğer headerToken yoksa geçersiz oturum döndür
     if (!headerToken) {
-        throw new ClientSideException("Geçersiz Oturum Lütfen Oturum Açın", 401);
+        throw new ClientSideException("Token gerekli.", 401);
     }
 
     const token = req.headers.authorization!.split(" ")[1]; // "Bearer " kısmını çıkarır ve sadece token'ı alır. bearer den sonra boşluk koymamızın sebebi budur. bir boşluktan sonraki değerleri al.
@@ -65,7 +65,7 @@ const tokenCheck = async (req: Request, res: Response, next: NextFunction) => {
     const userInfo = await db.table("users").get(decoded.sub).run(connection);
 
     if (!userInfo) {
-        throw new ClientSideException("Geçersiz Token", 401);
+        throw new ClientSideException("Token doğrulanamadı. Kullanıcı bulunamadı.", 401);
     }
 
     req.body.userInfo = userInfo;
@@ -73,4 +73,4 @@ const tokenCheck = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 
-export { createToken, tokenCheck }
+export { createToken, auth }
